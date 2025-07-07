@@ -1,0 +1,15 @@
+/* ordenes.css - Estilos específicos para el módulo de órdenes de trabajo */
+
+.card-ordenes {
+    border-left: 4px solid #6f42c1;
+    background: #f7f3ff;
+}
+
+.table-ordenes thead th {
+    background: #ede7f6;
+    color: #6f42c1;
+}
+
+.table-ordenes tbody tr:hover {
+    background: #f3eaff;
+} 

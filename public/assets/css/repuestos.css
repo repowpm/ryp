@@ -1,0 +1,15 @@
+/* repuestos.css - Estilos específicos para el módulo de repuestos */
+
+.card-repuestos {
+    border-left: 4px solid #fd7e14;
+    background: #fff8f2;
+}
+
+.table-repuestos thead th {
+    background: #fff3e0;
+    color: #fd7e14;
+}
+
+.table-repuestos tbody tr:hover {
+    background: #fff0e0;
+} 

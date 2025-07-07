@@ -1,0 +1,126 @@
+/* Estilos personalizados globales */
+body {
+    background-color: #f5f6fa;
+}
+
+.card {
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+}
+
+.card-header {
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+    color: #fff;
+    border-radius: 0.75rem 0.75rem 0 0;
+    font-weight: 500;
+    font-size: 1.15rem;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background: linear-gradient(90deg, #0056b3 0%, #007bff 100%);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+    font-weight: 500;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #34495e;
+}
+
+input.form-control, select.form-select {
+    border-radius: 0.5rem;
+    border-color: #d1d5db;
+    font-size: 1rem;
+}
+
+input.form-control:focus, select.form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.15);
+}
+
+.invalid-feedback {
+    font-size: 0.95em;
+}
+
+.alert-info {
+    background: #e3f0ff;
+    color: #0056b3;
+    border: none;
+}
+
+/* Login específico */
+.login-card {
+    max-width: 400px;
+    margin: 60px auto;
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px rgba(44,62,80,0.13);
+}
+
+.login-card .card-header {
+    background: #007bff;
+    color: #fff;
+    border-radius: 1rem 1rem 0 0;
+    text-align: center;
+}
+
+.login-card .btn-primary {
+    width: 100%;
+    font-size: 1.1rem;
+}
+
+/* Dashboard widgets */
+.dashboard-widget {
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+    background: #fff;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-widget .widget-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #007bff;
+}
+
+/* Tabla de usuarios */
+.table {
+    background: #fff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: #f0f4fa;
+    color: #34495e;
+    font-weight: 600;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+
+/* Responsive ajustes */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/*
+ * Para estilos específicos de cada módulo, usar:
+ *   clientes.css, vehiculos.css, repuestos.css, ordenes.css, reportes.css
+ * Inclúyelos en la vista correspondiente:
+ *   <link rel="stylesheet" href="<?= base_url('assets/css/clientes.css') ?>">
+ */ 

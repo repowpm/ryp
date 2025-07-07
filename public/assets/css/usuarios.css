@@ -1,0 +1,15 @@
+/* usuarios.css - Estilos específicos para el módulo de usuarios */
+
+.card-usuarios {
+    border-left: 4px solid #0d6efd;
+    background: #f7faff;
+}
+
+.table-usuarios thead th {
+    background: #e3eefd;
+    color: #0d6efd;
+}
+
+.table-usuarios tbody tr:hover {
+    background: #eaf2ff;
+} 

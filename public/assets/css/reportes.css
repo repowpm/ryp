@@ -1,0 +1,15 @@
+/* reportes.css - Estilos específicos para el módulo de reportes */
+
+.card-reportes {
+    border-left: 4px solid #17a2b8;
+    background: #f2fcff;
+}
+
+.table-reportes thead th {
+    background: #e0f7fa;
+    color: #17a2b8;
+}
+
+.table-reportes tbody tr:hover {
+    background: #e0f4fa;
+} 
