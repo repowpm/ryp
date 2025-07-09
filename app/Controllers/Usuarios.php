@@ -109,7 +109,6 @@ class Usuarios extends BaseController
             'apellido_materno' => 'max_length[50]|regex_match[/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]*$/]',
             'run' => 'required|regex_match[/^[0-9]{7,8}-[0-9Kk]{1}$/]|is_unique[WP_MD_Usuarios.run]',
             'telefono' => 'max_length[20]|regex_match[/^\+?[0-9]{8,15}$/]',
-            'correo' => 'required|valid_email|max_length[100]|is_unique[WP_MD_Usuarios.correo]',
             'username' => 'required|min_length[3]|max_length[50]|alpha_numeric',
             'password' => 'required|min_length[6]',
             'id_rol' => 'required|in_list[1,2]',
@@ -135,7 +134,7 @@ class Usuarios extends BaseController
                 'apellido_paterno' => $this->request->getPost('apellido_paterno'),
                 'apellido_materno' => $this->request->getPost('apellido_materno'),
                 'telefono' => $this->request->getPost('telefono'),
-                'correo' => $this->request->getPost('correo'),
+                'direccion' => $this->request->getPost('direccion'),
                 'id_rol' => $this->request->getPost('id_rol'),
                 'id_estado_usuario' => $this->request->getPost('id_estado_usuario'),
                 'usuario_creacion' => $usuario_creacion
@@ -202,7 +201,6 @@ class Usuarios extends BaseController
             'apellido_materno' => 'max_length[50]|regex_match[/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]*$/]',
             'run' => 'required|regex_match[/^[0-9]{7,8}-[0-9Kk]{1}$/]|is_unique[WP_MD_Usuarios.run,id_usuario,' . $id . ']',
             'telefono' => 'max_length[20]|regex_match[/^\+?[0-9]{8,15}$/]',
-            'correo' => 'required|valid_email|max_length[100]|is_unique[WP_MD_Usuarios.correo,id_usuario,' . $id . ']',
             'username' => 'required|min_length[3]|max_length[50]|alpha_numeric',
             'id_rol' => 'required|in_list[1,2]',
             'id_estado_usuario' => 'required|in_list[1,2]'
@@ -224,7 +222,7 @@ class Usuarios extends BaseController
                 'apellido_paterno' => $this->request->getPost('apellido_paterno'),
                 'apellido_materno' => $this->request->getPost('apellido_materno'),
                 'telefono' => $this->request->getPost('telefono'),
-                'correo' => $this->request->getPost('correo'),
+                'direccion' => $this->request->getPost('direccion'),
                 'id_rol' => $this->request->getPost('id_rol'),
                 'id_estado_usuario' => $this->request->getPost('id_estado_usuario'),
                 'usuario_modificacion' => session()->get('username')

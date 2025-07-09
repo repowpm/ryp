@@ -75,6 +75,8 @@
                             <input type="text" class="form-control" id="direccion" name="direccion" value="<?= isset($usuario['direccion']) ? $usuario['direccion'] : '' ?>" maxlength="255" placeholder="Ej: Av. Siempre Viva 1234">
                             <div class="invalid-feedback" id="direccion-error"></div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="id_rol" class="form-label">Rol *</label>
                             <select class="form-select" id="id_rol" name="id_rol" required>
@@ -84,8 +86,6 @@
                             </select>
                             <div class="invalid-feedback" id="id_rol-error"></div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="id_estado_usuario" class="form-label">Estado *</label>
                             <select class="form-select" id="id_estado_usuario" name="id_estado_usuario" required>
@@ -96,6 +96,7 @@
                             <div class="invalid-feedback" id="id_estado_usuario-error"></div>
                         </div>
                     </div>
+
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <button type="button" class="btn btn-secondary me-md-2" onclick="window.location.href='<?= base_url('usuarios') ?>'">
                             <i class="fas fa-times"></i> Cancelar

@@ -73,6 +73,8 @@
                             <input type="text" class="form-control" id="direccion" name="direccion" maxlength="255" placeholder="Ej: Av. Siempre Viva 1234">
                             <div class="invalid-feedback" id="direccion-error"></div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="id_rol" class="form-label">Rol *</label>
                             <select class="form-select" id="id_rol" name="id_rol" required>
@@ -82,8 +84,6 @@
                             </select>
                             <div class="invalid-feedback" id="id_rol-error"></div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="id_estado_usuario" class="form-label">Estado *</label>
                             <select class="form-select" id="id_estado_usuario" name="id_estado_usuario" required>
@@ -94,6 +94,7 @@
                             <div class="invalid-feedback" id="id_estado_usuario-error"></div>
                         </div>
                     </div>
+
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i>
                         <strong>Nota:</strong> El correo electrónico se generará automáticamente usando la función de la base de datos.
@@ -119,7 +120,6 @@
                 <h6>Campos Requeridos</h6>
                 <ul class="list-unstyled">
                     <li><i class="fas fa-asterisk text-danger"></i> RUN</li>
-                    <li><i class="fas fa-asterisk text-danger"></i> Dirección</li>
                     <li><i class="fas fa-asterisk text-danger"></i> Nombre de Usuario</li>
                     <li><i class="fas fa-asterisk text-danger"></i> Contraseña</li>
                     <li><i class="fas fa-asterisk text-danger"></i> Nombres</li>

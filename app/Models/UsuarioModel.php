@@ -9,8 +9,8 @@ class UsuarioModel extends Model
     protected $table = 'WP_MD_Usuarios';
     protected $primaryKey = 'id_usuario';
     protected $allowedFields = [
-        'username', 'password_hash', 'nombres', 'apellido_paterno', 
-        'apellido_materno', 'correo', 'telefono', 'id_rol', 'id_estado_usuario',
+        'run', 'username', 'password_hash', 'nombres', 'apellido_paterno', 
+        'apellido_materno', 'correo', 'telefono', 'direccion', 'id_rol', 'id_estado_usuario',
         'fecha_creacion', 'usuario_creacion', 'fecha_modificacion', 
         'usuario_modificacion', 'fecha_eliminacion', 'usuario_eliminacion'
     ];
