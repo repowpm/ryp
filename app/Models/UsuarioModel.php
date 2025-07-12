@@ -6,13 +6,14 @@ use CodeIgniter\Model;
 
 class UsuarioModel extends Model
 {
-    protected $table = 'WP_MD_Usuarios';
+    protected $table = 'wp_md_usuarios';
     protected $primaryKey = 'id_usuario';
+    protected $useAutoIncrement = false;
     protected $allowedFields = [
         'run', 'username', 'password_hash', 'nombres', 'apellido_paterno', 
         'apellido_materno', 'correo', 'telefono', 'direccion', 'id_rol', 'id_estado_usuario',
-        'fecha_creacion', 'usuario_creacion', 'fecha_modificacion', 
-        'usuario_modificacion', 'fecha_eliminacion', 'usuario_eliminacion'
+        'created_at', 'usuario_creacion', 'updated_at', 
+        'usuario_actualizacion', 'deleted_at', 'usuario_eliminacion'
     ];
 
     public function autenticar($username, $password)
@@ -23,8 +24,8 @@ class UsuarioModel extends Model
             u.id_rol, u.id_estado_usuario,
             r.nombre_rol
         ')
-        ->from('WP_MD_Usuarios u')
-        ->join('WP_MD_Roles r', 'u.id_rol = r.id_rol')
+        ->from('wp_md_usuarios u')
+        ->join('wp_md_roles r', 'u.id_rol = r.id_rol')
         ->where('u.username', $username)
         ->first();
 
@@ -46,7 +47,7 @@ class UsuarioModel extends Model
             // Generar correo único usando la función de la BD
             try {
                 $correo = $this->db->query("
-                    SELECT WP_FN_GenerarCorreoUnico(?, ?) as correo
+                    SELECT WP_FN_GENERAR_CORREO(?, ?) as correo
                 ", [$datos['nombres'], $datos['apellido_paterno']])->getRow()->correo;
                 if (!$correo) {
                     throw new \Exception('No se pudo generar un correo único.');
@@ -72,15 +73,38 @@ class UsuarioModel extends Model
                 'direccion' => $datos['direccion'] ?? null,
                 'id_rol' => $datos['id_rol'],
                 'id_estado_usuario' => $datos['id_estado_usuario'] ?? 1,
-                'fecha_creacion' => date('Y-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s'),
                 'usuario_creacion' => $datos['usuario_creacion'] ?? 'SISTEMA'
             ];
 
-            // Usar inserción directa (más confiable)
-            $this->insert($datosInsert);
-            $id = $this->db->insertID();
-
-            return $id;
+            // Intentar usar procedimiento almacenado
+            try {
+                $result = $this->db->query("
+                    CALL WP_SP_INSERTAR_USUARIO(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ", [
+                    $datosInsert['run'],
+                    $datosInsert['username'],
+                    $datosInsert['password_hash'],
+                    $datosInsert['nombres'],
+                    $datosInsert['apellido_paterno'],
+                    $datosInsert['apellido_materno'],
+                    $datosInsert['correo'],
+                    $datosInsert['telefono'],
+                    $datosInsert['direccion'],
+                    $datosInsert['id_rol'],
+                    $datosInsert['id_estado_usuario'],
+                    $datosInsert['usuario_creacion']
+                ]);
+                
+                // Obtener el ID del usuario creado
+                $id = $this->db->query("SELECT LAST_INSERT_ID() as id")->getRow()->id;
+                return $id;
+            } catch (\Exception $e) {
+                if (strpos($e->getMessage(), 'Duplicate') !== false || strpos($e->getMessage(), 'duplicada') !== false) {
+                    throw new \Exception('El usuario o correo ya existe.');
+                }
+                throw $e;
+            }
         } catch (\Exception $e) {
             log_message('error', 'Error al crear usuario: ' . $e->getMessage());
             throw $e;
@@ -92,14 +116,14 @@ class UsuarioModel extends Model
         return $this->select('
             u.id_usuario, u.username, u.nombres, u.apellido_paterno, 
             u.apellido_materno, u.correo, u.telefono, u.id_rol,
-            u.id_estado_usuario, u.fecha_creacion,
+            u.id_estado_usuario, u.created_at,
             r.nombre_rol,
             eu.nombre_estado
         ')
-        ->from('WP_MD_Usuarios u')
-        ->join('WP_MD_Roles r', 'u.id_rol = r.id_rol')
-        ->join('WP_MD_EstadosUsuario eu', 'u.id_estado_usuario = eu.id_estado_usuario')
-        ->where('u.fecha_eliminacion IS NULL')
+        ->from('wp_md_usuarios u')
+        ->join('wp_md_roles r', 'u.id_rol = r.id_rol')
+        ->join('wp_md_estados_usuario eu', 'u.id_estado_usuario = eu.id_estado_usuario')
+        ->where('u.deleted_at IS NULL')
         ->findAll();
     }
 
@@ -111,59 +135,55 @@ class UsuarioModel extends Model
             
             // Verificar si las tablas relacionadas existen
             try {
-                $roles = $this->db->table('WP_MD_Roles')->get()->getResultArray();
+                $roles = $this->db->table('wp_md_roles')->get()->getResultArray();
             } catch (\Exception $e) {
-                log_message('error', 'Error al acceder a WP_MD_Roles: ' . $e->getMessage());
+                log_message('error', 'Error al acceder a wp_md_roles: ' . $e->getMessage());
                 $roles = [];
             }
             
             try {
-                $estados = $this->db->table('WP_MD_EstadosUsuario')->get()->getResultArray();
+                $estados = $this->db->table('wp_md_estados_usuario')->get()->getResultArray();
             } catch (\Exception $e) {
-                log_message('error', 'Error al acceder a WP_MD_EstadosUsuario: ' . $e->getMessage());
+                log_message('error', 'Error al acceder a wp_md_estados_usuario: ' . $e->getMessage());
                 $estados = [];
             }
             
             // Construir la consulta según las tablas disponibles
             if (!empty($roles) && !empty($estados)) {
                 // Ambas tablas existen, usar joins completos
-                $builder = $this->db->table('WP_MD_Usuarios u')
+                $builder = $this->db->table('wp_md_usuarios u')
                     ->select('u.id_usuario, u.username, u.nombres, u.apellido_paterno, 
                              u.apellido_materno, u.correo, u.telefono, u.id_rol,
-                             u.id_estado_usuario, u.fecha_creacion,
+                             u.id_estado_usuario, u.created_at,
                              r.nombre_rol, eu.nombre_estado')
-                    ->join('WP_MD_Roles r', 'u.id_rol = r.id_rol')
-                    ->join('WP_MD_EstadosUsuario eu', 'u.id_estado_usuario = eu.id_estado_usuario')
-                    ->where('u.fecha_eliminacion IS NULL');
+                    ->join('wp_md_roles r', 'u.id_rol = r.id_rol')
+                    ->join('wp_md_estados_usuario eu', 'u.id_estado_usuario = eu.id_estado_usuario');
             } elseif (!empty($roles)) {
                 // Solo existe la tabla de roles
-                $builder = $this->db->table('WP_MD_Usuarios u')
+                $builder = $this->db->table('wp_md_usuarios u')
                     ->select('u.id_usuario, u.username, u.nombres, u.apellido_paterno, 
                              u.apellido_materno, u.correo, u.telefono, u.id_rol,
-                             u.id_estado_usuario, u.fecha_creacion,
+                             u.id_estado_usuario, u.created_at,
                              r.nombre_rol, 
                              CASE WHEN u.id_estado_usuario = 1 THEN "Activo" ELSE "Inactivo" END as nombre_estado')
-                    ->join('WP_MD_Roles r', 'u.id_rol = r.id_rol')
-                    ->where('u.fecha_eliminacion IS NULL');
+                    ->join('wp_md_roles r', 'u.id_rol = r.id_rol');
             } elseif (!empty($estados)) {
                 // Solo existe la tabla de estados
-                $builder = $this->db->table('WP_MD_Usuarios u')
+                $builder = $this->db->table('wp_md_usuarios u')
                     ->select('u.id_usuario, u.username, u.nombres, u.apellido_paterno, 
                              u.apellido_materno, u.correo, u.telefono, u.id_rol,
-                             u.id_estado_usuario, u.fecha_creacion,
+                             u.id_estado_usuario, u.created_at,
                              CASE WHEN u.id_rol = 1 THEN "Administrador" ELSE "Mecánico" END as nombre_rol,
                              eu.nombre_estado')
-                    ->join('WP_MD_EstadosUsuario eu', 'u.id_estado_usuario = eu.id_estado_usuario')
-                    ->where('u.fecha_eliminacion IS NULL');
+                    ->join('wp_md_estados_usuario eu', 'u.id_estado_usuario = eu.id_estado_usuario');
             } else {
                 // Ninguna tabla existe, usar valores por defecto
-                $builder = $this->db->table('WP_MD_Usuarios u')
+                $builder = $this->db->table('wp_md_usuarios u')
                     ->select('u.id_usuario, u.username, u.nombres, u.apellido_paterno, 
                              u.apellido_materno, u.correo, u.telefono, u.id_rol,
-                             u.id_estado_usuario, u.fecha_creacion,
+                             u.id_estado_usuario, u.created_at,
                              CASE WHEN u.id_rol = 1 THEN "Administrador" ELSE "Mecánico" END as nombre_rol,
-                             CASE WHEN u.id_estado_usuario = 1 THEN "Activo" ELSE "Inactivo" END as nombre_estado')
-                    ->where('u.fecha_eliminacion IS NULL');
+                             CASE WHEN u.id_estado_usuario = 1 THEN "Activo" ELSE "Inactivo" END as nombre_estado');
             }
 
         // Aplicar búsqueda
@@ -204,8 +224,8 @@ class UsuarioModel extends Model
     public function contarUsuarios()
     {
         try {
-            $count = $this->db->table('WP_MD_Usuarios')
-                ->where('fecha_eliminacion IS NULL')
+            $count = $this->db->table('wp_md_usuarios')
+                ->where('deleted_at IS NULL')
                 ->countAllResults();
             
             log_message('debug', 'Total de usuarios: ' . $count);
@@ -219,9 +239,9 @@ class UsuarioModel extends Model
     public function obtenerUsuariosSimple()
     {
         try {
-            $usuarios = $this->db->table('WP_MD_Usuarios')
+            $usuarios = $this->db->table('wp_md_usuarios')
                 ->select('id_usuario, username, nombres, apellido_paterno, correo, telefono, id_rol, id_estado_usuario')
-                ->where('fecha_eliminacion IS NULL')
+                ->where('deleted_at IS NULL')
                 ->get()
                 ->getResultArray();
             
@@ -241,10 +261,10 @@ class UsuarioModel extends Model
 
     public function contarUsuariosFiltrados($search)
     {
-        $builder = $this->db->table('WP_MD_Usuarios u')
-            ->join('WP_MD_Roles r', 'u.id_rol = r.id_rol')
-            ->join('WP_MD_EstadosUsuario eu', 'u.id_estado_usuario = eu.id_estado_usuario')
-            ->where('u.fecha_eliminacion IS NULL');
+        $builder = $this->db->table('wp_md_usuarios u')
+            ->join('wp_md_roles r', 'u.id_rol = r.id_rol')
+            ->join('wp_md_estados_usuario eu', 'u.id_estado_usuario = eu.id_estado_usuario')
+            ->where('u.deleted_at IS NULL');
 
         if (!empty($search)) {
             $builder->groupStart()
@@ -266,15 +286,15 @@ class UsuarioModel extends Model
         return $this->select('
             u.id_usuario, u.username, u.nombres, u.apellido_paterno, 
             u.apellido_materno, u.correo, u.telefono, u.run, u.direccion, u.id_rol,
-            u.id_estado_usuario, u.fecha_creacion,
+            u.id_estado_usuario, u.created_at,
             r.nombre_rol,
             eu.nombre_estado
         ')
-        ->from('WP_MD_Usuarios u')
-        ->join('WP_MD_Roles r', 'u.id_rol = r.id_rol')
-        ->join('WP_MD_EstadosUsuario eu', 'u.id_estado_usuario = eu.id_estado_usuario')
+        ->from('wp_md_usuarios u')
+        ->join('wp_md_roles r', 'u.id_rol = r.id_rol')
+        ->join('wp_md_estados_usuario eu', 'u.id_estado_usuario = eu.id_estado_usuario')
         ->where('u.id_usuario', $id)
-        ->where('u.fecha_eliminacion IS NULL')
+        ->where('u.deleted_at IS NULL')
         ->first();
     }
 
@@ -297,26 +317,25 @@ class UsuarioModel extends Model
 
             // Intentar usar procedimiento almacenado
             $this->db->query(
-                "CALL WP_MD_ActualizarUsuario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+                "CALL WP_SP_ACTUALIZAR_USUARIO(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
                     $id,
-                    $datos['run'],
                     $datos['username'],
+                    $datos['password_hash'] ?? null,
                     $datos['nombres'],
                     $datos['apellido_paterno'],
                     $datos['apellido_materno'],
                     $datos['correo'] ?? null,
                     $datos['telefono'] ?? null,
-                    $datos['direccion'] ?? null,
                     $datos['id_rol'],
                     $datos['id_estado_usuario'],
-                    $datos['usuario_modificacion']
+                    $datos['usuario_actualizacion']
                 ]
             );
 
             return true;
         } catch (\Exception $e) {
             // Si falla el procedimiento, usar actualización directa
-            $datos['fecha_modificacion'] = date('Y-m-d H:i:s');
+            $datos['updated_at'] = date('Y-m-d H:i:s');
             $this->where('id_usuario', $id)->set($datos)->update();
             return true;
         }
@@ -327,14 +346,14 @@ class UsuarioModel extends Model
         try {
             // Intentar usar procedimiento almacenado
             $this->db->query("
-                CALL WP_MD_EliminarUsuario(?, ?)
+                CALL WP_SP_ELIMINAR_USUARIO(?, ?)
             ", [$id, $usuarioEliminacion]);
 
             return true;
         } catch (\Exception $e) {
             // Si falla el procedimiento, usar eliminación lógica directa
             $this->where('id_usuario', $id)->set([
-                'fecha_eliminacion' => date('Y-m-d H:i:s'),
+                'deleted_at' => date('Y-m-d H:i:s'),
                 'usuario_eliminacion' => $usuarioEliminacion,
                 'id_estado_usuario' => 2
             ])->update();

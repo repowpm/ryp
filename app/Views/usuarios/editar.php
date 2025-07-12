@@ -151,13 +151,12 @@
                 </div>
                 <div class="mb-3">
                     <strong>Fecha de Creación:</strong><br>
-                    <?= date('d/m/Y H:i', strtotime($usuario['fecha_creacion'])) ?>
+                    <?= date('d/m/Y H:i', strtotime($usuario['created_at'])) ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script src="<?= base_url('assets/js/usuarios.js') ?>"></script>
 
 <?= $this->endSection() ?> 

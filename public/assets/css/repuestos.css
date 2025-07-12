@@ -1,15 +1,51 @@
 /* repuestos.css - Estilos específicos para el módulo de repuestos */
 
 .card-repuestos {
-    border-left: 4px solid #fd7e14;
-    background: #fff8f2;
+    border-left: 4px solid #0d6efd;
+    background: #f7faff;
 }
 
-.table-repuestos thead th {
-    background: #fff3e0;
-    color: #fd7e14;
+.table-repuestos thead.table-dark th {
+    background: #e3eefd !important;
+    color: #0d6efd !important;
 }
 
 .table-repuestos tbody tr:hover {
-    background: #fff0e0;
+    background: #eaf2ff;
+}
+
+/* Stock formateado en la tabla */
+.stock-formato {
+    font-weight: bold;
+}
+
+.stock-formato.critico {
+    color: #dc3545;
+}
+
+.stock-formato.bajo {
+    color: #ffc107;
+}
+
+.stock-formato.normal {
+    color: #28a745;
+}
+
+/* Precio formateado en la tabla */
+.precio-formato {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #28a745;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
 } 

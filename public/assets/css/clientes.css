@@ -1,15 +1,15 @@
 /* clientes.css - Estilos específicos para el módulo de clientes */
 
 .card-clientes {
-    border-left: 4px solid #007bff;
-    background: #f8fbff;
+    border-left: 4px solid #0d6efd;
+    background: #f7faff;
 }
 
-.table-clientes thead th {
-    background: #e3f0ff;
-    color: #0056b3;
+.table-clientes thead.table-dark th {
+    background: #e3eefd !important;
+    color: #0d6efd !important;
 }
 
 .table-clientes tbody tr:hover {
-    background: #eaf4ff;
+    background: #eaf2ff;
 } 

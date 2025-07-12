@@ -138,5 +138,4 @@
     </div>
 </div>
 
-<script src="<?= base_url('assets/js/usuarios.js') ?>"></script>
-<?= $this->endSection() ?> 
+<?= $this->endSection() ?>

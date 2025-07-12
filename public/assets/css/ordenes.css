@@ -1,15 +1,138 @@
-/* ordenes.css - Estilos específicos para el módulo de órdenes de trabajo */
+/* Estilos específicos para el módulo de órdenes */
 
 .card-ordenes {
-    border-left: 4px solid #6f42c1;
-    background: #f7f3ff;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+}
+
+.table-ordenes {
+    margin-bottom: 0;
 }
 
 .table-ordenes thead th {
-    background: #ede7f6;
-    color: #6f42c1;
+    background-color: #f8f9fa;
+    color: #495057;
+    border-color: #dee2e6;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
 }
 
 .table-ordenes tbody tr:hover {
-    background: #f3eaff;
+    background-color: #f8f9fa;
+}
+
+.table-ordenes .badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+}
+
+.table-ordenes .btn-group .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+}
+
+.table-ordenes .btn-group .btn:not(:last-child) {
+    margin-right: 0.25rem;
+}
+
+/* Estilos para los badges de estado */
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table-ordenes {
+        font-size: 0.875rem;
+    }
+    
+    .table-ordenes .btn-group .btn {
+        padding: 0.125rem 0.25rem;
+        font-size: 0.75rem;
+    }
+    
+    .table-ordenes thead th {
+        font-size: 0.75rem;
+    }
+}
+
+/* Estilos para el modal de eliminación */
+#eliminarModal .modal-header {
+    background-color: #dc3545;
+    color: white;
+}
+
+#eliminarModal .modal-title {
+    font-weight: 600;
+}
+
+/* Estilos para formularios de órdenes */
+.form-ordenes .form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-ordenes .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-ordenes .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.form-ordenes .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Estilos para la tabla de repuestos en formularios */
+#repuestosTable {
+    margin-top: 1rem;
+}
+
+#repuestosTable thead th {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+#repuestosTable tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Estilos para totales */
+.total-orden {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #28a745;
+}
+
+/* Estilos para mensajes de estado vacío */
+.table-ordenes tbody .text-muted {
+    font-style: italic;
+    color: #6c757d !important;
 } 

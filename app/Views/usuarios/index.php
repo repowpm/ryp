@@ -17,10 +17,10 @@
     </div>
 </div>
 
-<div class="card">
+<div class="card card-usuarios">
     <div class="card-body">
         <div class="table-responsive">
-            <table id="usuariosTable" class="table table-striped table-hover">
+            <table id="usuariosTable" class="table table-striped table-hover table-usuarios">
                 <thead class="table-dark">
                     <tr>
                         <th>ID</th>

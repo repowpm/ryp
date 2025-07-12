@@ -1,15 +1,17 @@
 /* vehiculos.css - Estilos específicos para el módulo de vehículos */
 
 .card-vehiculos {
-    border-left: 4px solid #28a745;
-    background: #f6fff8;
+    border-left: 4px solid #0d6efd;
+    background: #f7faff;
 }
 
-.table-vehiculos thead th {
-    background: #e6f9ed;
-    color: #218838;
+.table-vehiculos thead.table-dark th {
+    background: #e3eefd !important;
+    color: #0d6efd !important;
 }
 
 .table-vehiculos tbody tr:hover {
-    background: #e0f7ea;
-} 
+    background: #eaf2ff;
+}
+
+ 

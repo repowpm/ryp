@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Taller Rápido y Furioso' ?></title>
     
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
+    <link rel="icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -23,23 +27,73 @@
         }
     ?>
     <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
         .navbar-brand {
             font-weight: bold;
-            color: #dc3545 !important;
+            color: #007bff !important;
         }
+        
+        .navbar {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        
+        .navbar-nav .nav-link {
+            color: #495057 !important;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: #007bff !important;
+        }
+        
         .sidebar {
             min-height: calc(100vh - 60px);
-            background-color: #f8f9fa;
+            background-color: #ffffff;
+            border-right: 1px solid #dee2e6;
         }
+        
         .main-content {
-            /* min-height: calc(100vh - 60px); */
+            background-color: #f8f9fa;
             min-height: 0;
+            color: #212529;
         }
+        
         .footer {
-            background-color: #343a40;
-            color: white;
+            background-color: #ffffff;
+            color: #6c757d;
             padding: 1rem 0;
             margin-top: auto;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            color: #212529;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .table {
+            color: #212529;
+        }
+        
+        .table thead th {
+            background-color: #f8f9fa;
+            color: #495057;
+            border-color: #dee2e6;
+        }
+        
+        .table tbody tr {
+            background-color: #ffffff;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
         }
     </style>
 </head>
@@ -66,6 +120,9 @@
     </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Moment.js para formateo de fechas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/es.js"></script>
     <!-- DataTables JS (después de jQuery) -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
@@ -77,248 +134,27 @@
         Swal.fire(<?= json_encode(session()->getFlashdata('swal')) ?>);
     </script>
     <?php endif; ?>
-    <!-- Scripts específicos de la página -->
-    <?php if (isset($title) && strpos($title, 'Gestión de Usuarios') !== false): ?>
     <script>
-        jQuery(document).ready(function($) {
-            // Inicializar DataTable
-            var table = $('#usuariosTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: '<?= base_url('usuarios/listar') ?>',
-                    type: 'GET',
-                    dataSrc: function(json) {
-                        return json.data || [];
-                    },
-                    error: function(xhr, error, thrown) {
-                        console.error('Error en AJAX:', error);
-                    }
-                },
-                columns: [
-                    { data: 0, visible: false }, // ID (oculto)
-                    { data: 1 }, // Usuario
-                    { data: 2 }, // Nombre Completo
-                    { data: 3 }, // Correo
-                    { data: 4 }, // Teléfono
-                    { data: 5 }, // Rol
-                    { data: 6 }, // Estado
-                    { data: 7, orderable: false, searchable: false } // Acciones
-                ],
-                responsive: true,
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
-                },
-                order: [[1, 'asc']], // Ordenar por usuario por defecto
-                pageLength: 10,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]]
-            });
-            // Variable para almacenar el ID del usuario a eliminar
-            var usuarioAEliminar = null;
-            // Función para eliminar usuario
-            window.eliminarUsuario = function(id) {
-                usuarioAEliminar = id;
-                $('#eliminarModal').modal('show');
-            };
-            // Confirmar eliminación
-            $('#confirmarEliminar').click(function() {
-                if (usuarioAEliminar) {
-                    $.ajax({
-                        url: '<?= base_url('usuarios/eliminar/') ?>' + usuarioAEliminar,
-                        type: 'POST',
-                        dataType: 'json',
-                        success: function(response) {
-                            $('#eliminarModal').modal('hide');
-                            
-                            if (response.success) {
-                                Swal.fire({
-                                    title: '¡Eliminado!',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'Aceptar'
-                                }).then(() => {
-                                    table.ajax.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: response.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'Aceptar'
-                                });
-                            }
-                        },
-                        error: function() {
-                            $('#eliminarModal').modal('hide');
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Error al eliminar el usuario',
-                                icon: 'error',
-                                confirmButtonText: 'Aceptar'
-                            });
-                        }
-                    });
-                }
-            });
-        });
+        var base_url = '<?= base_url() ?>';
+        var csrf_token_name = '<?= csrf_token() ?>';
+        var csrf_token_value = '<?= csrf_hash() ?>';
     </script>
-    <?php endif; ?>
-    <?php if (isset($title) && strpos($title, 'Editar Usuario') !== false): ?>
-    <script>
-    $(function() {
-        let enviando = false;
-        // Toggle password visibility
-        $('#togglePassword').click(function() {
-            const passwordField = $('#password');
-            const icon = $(this).find('i');
-            if (passwordField.attr('type') === 'password') {
-                passwordField.attr('type', 'text');
-                icon.removeClass('fa-eye').addClass('fa-eye-slash');
-            } else {
-                passwordField.attr('type', 'password');
-                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+    <!-- Scripts específicos de cada módulo -->
+    <?php
+        $uri = service('uri');
+        $jsModulos = ['usuarios','clientes','vehiculos','repuestos','reportes'];
+        $segmentos = [];
+        for ($i = 1; $i <= $uri->getTotalSegments(); $i++) {
+            $segmentos[] = $uri->getSegment($i);
+        }
+        foreach ($jsModulos as $modulo) {
+            if (in_array($modulo, $segmentos)) {
+                echo '<script src="' . base_url('assets/js/' . $modulo . '.js') . '"></script>';
             }
-        });
-        // Form submission robusto
-        $('#formEditarUsuario').off('submit').on('submit', function(e) {
-            e.preventDefault();
-            if (enviando) return false;
-            enviando = true;
-            // Limpiar errores previos
-            $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').text('');
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    enviando = false;
-                    if (response.success) {
-                        Swal.fire({
-                            title: '¡Usuario Actualizado!',
-                            text: response.message,
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            window.location.href = '<?= base_url('usuarios') ?>';
-                        });
-                    } else if (response.errors) {
-                        Object.keys(response.errors).forEach(function(field) {
-                            $('#' + field).addClass('is-invalid');
-                            $('#' + field + '-error').text(response.errors[field]);
-                        });
-                        Swal.fire({
-                            title: 'Error de Validación',
-                            html: '<ul class="text-start">' + Object.values(response.errors).map(e => '<li>' + e + '</li>').join('') + '</ul>',
-                            icon: 'warning',
-                            confirmButtonText: 'Entendido'
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: response.message,
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    enviando = false;
-                    let msg = 'Error al actualizar el usuario';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        msg = xhr.responseJSON.message;
-                    }
-                    Swal.fire({
-                        title: 'Error',
-                        text: msg,
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-            });
-            return false;
-        });
-    });
-    </script>
-    <?php endif; ?>
-    <?php if (isset($title) && strpos($title, 'Crear Usuario') !== false): ?>
-    <script>
-    $(function() {
-        // Toggle password visibility en crear usuario
-        $('#togglePassword').click(function() {
-            const passwordField = $('#password');
-            const icon = $(this).find('i');
-            if (passwordField.attr('type') === 'password') {
-                passwordField.attr('type', 'text');
-                icon.removeClass('fa-eye').addClass('fa-eye-slash');
-            } else {
-                passwordField.attr('type', 'password');
-                icon.removeClass('fa-eye-slash').addClass('fa-eye');
-            }
-        });
-        let enviando = false;
-        $('#formCrearUsuario').off('submit').on('submit', function(e) {
-            e.preventDefault();
-            if (enviando) return false;
-            enviando = true;
-            $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').text('');
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    enviando = false;
-                    if (response.success) {
-                        Swal.fire({
-                            title: '¡Usuario Creado!',
-                            text: response.message,
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            window.location.href = '<?= base_url('usuarios') ?>';
-                        });
-                    } else if (response.errors) {
-                        Object.keys(response.errors).forEach(function(field) {
-                            $('#' + field).addClass('is-invalid');
-                            $('#' + field + '-error').text(response.errors[field]);
-                        });
-                        Swal.fire({
-                            title: 'Error de Validación',
-                            html: '<ul class="text-start">' + Object.values(response.errors).map(e => '<li>' + e + '</li>').join('') + '</ul>',
-                            icon: 'warning',
-                            confirmButtonText: 'Entendido'
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: response.message,
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    enviando = false;
-                    let msg = 'Error al crear el usuario';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        msg = xhr.responseJSON.message;
-                    }
-                    Swal.fire({
-                        title: 'Error',
-                        text: msg,
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-            });
-            return false;
-        });
-    });
-    </script>
-    <?php endif; ?>
+        }
+    ?>
     <script src="<?= base_url('assets/js/main.js') ?>"></script>
+    <!-- Scripts adicionales específicos de la vista -->
+    <?= $this->renderSection('scripts') ?>
 </body>
-</html> 
+</html>

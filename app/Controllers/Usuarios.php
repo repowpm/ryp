@@ -107,7 +107,7 @@ class Usuarios extends BaseController
             'nombres' => 'required|min_length[2]|max_length[100]|regex_match[/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/]',
             'apellido_paterno' => 'required|min_length[2]|max_length[50]|regex_match[/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/]',
             'apellido_materno' => 'max_length[50]|regex_match[/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]*$/]',
-            'run' => 'required|regex_match[/^[0-9]{7,8}-[0-9Kk]{1}$/]|is_unique[WP_MD_Usuarios.run]',
+            'run' => 'required|regex_match[/^[0-9]{7,8}-[0-9Kk]{1}$/]|is_unique[wp_md_usuarios.run]',
             'telefono' => 'max_length[20]|regex_match[/^\+?[0-9]{8,15}$/]',
             'username' => 'required|min_length[3]|max_length[50]|alpha_numeric',
             'password' => 'required|min_length[6]',
@@ -199,7 +199,7 @@ class Usuarios extends BaseController
             'nombres' => 'required|min_length[2]|max_length[100]|regex_match[/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/]',
             'apellido_paterno' => 'required|min_length[2]|max_length[50]|regex_match[/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/]',
             'apellido_materno' => 'max_length[50]|regex_match[/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]*$/]',
-            'run' => 'required|regex_match[/^[0-9]{7,8}-[0-9Kk]{1}$/]|is_unique[WP_MD_Usuarios.run,id_usuario,' . $id . ']',
+            'run' => 'required|regex_match[/^[0-9]{7,8}-[0-9Kk]{1}$/]|is_unique[wp_md_usuarios.run,id_usuario,' . $id . ']',
             'telefono' => 'max_length[20]|regex_match[/^\+?[0-9]{8,15}$/]',
             'username' => 'required|min_length[3]|max_length[50]|alpha_numeric',
             'id_rol' => 'required|in_list[1,2]',
@@ -256,7 +256,8 @@ class Usuarios extends BaseController
         }
 
         // No permitir eliminar el propio usuario
-        if ($id == session()->get('id_usuario')) {
+        if ($id === session()->get('id_usuario')) {
+            log_message('error', 'Intento de auto-eliminación: id en sesión = ' . session()->get('id_usuario') . ', id recibido = ' . $id);
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'No puedes eliminar tu propia cuenta'
@@ -282,7 +283,7 @@ class Usuarios extends BaseController
     private function generarBotonesAccion($idUsuario)
     {
         $botones = '<div class="btn-group" role="group">';
-        $botones .= '<a href="' . base_url('usuarios/editar/' . $idUsuario) . '" class="btn btn-sm btn-primary" title="Editar"><i class="fas fa-edit"></i></a>';
+        $botones .= '<a href="' . base_url('usuarios/editar/' . $idUsuario) . '" class="btn btn-sm btn-warning me-1" title="Editar"><i class="fas fa-edit"></i></a>';
         $botones .= '<button type="button" class="btn btn-sm btn-danger" onclick="eliminarUsuario(\'' . $idUsuario . '\')" title="Eliminar"><i class="fas fa-trash"></i></button>';
         $botones .= '</div>';
         

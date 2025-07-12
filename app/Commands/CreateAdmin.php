@@ -32,13 +32,13 @@ class CreateAdmin extends BaseCommand
 
             // Generar correo único usando la función de la BD
             $correo = $db->query("
-                SELECT WP_FN_GenerarCorreoUnico('Administrador', 'Sistema') as correo
+                SELECT WP_FN_GenerarCorreo('Administrador', 'Sistema') as correo
             ")->getRow()->correo;
 
             // Intentar usar el procedimiento almacenado primero
             try {
                 $db->query("
-                    CALL WP_MD_InsertarUsuario(
+                    CALL WP_SP_INSERTAR_USUARIO(
                         'admin', 
                         '" . password_hash('admin123', PASSWORD_DEFAULT) . "',
                         'Administrador',

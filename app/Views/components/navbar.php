@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?= base_url('dashboard') ?>">
             <i class="fas fa-tools"></i> Taller Rápido y Furioso
@@ -14,6 +14,19 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?= strpos(current_url(), 'ordenes') !== false ? 'active' : '' ?>" href="<?= base_url('ordenes') ?>">
+                        <i class="fas fa-clipboard-list"></i> Órdenes de Trabajo
+                    </a>
+                </li>
+                <?php if (puede_ver_repuestos()): // Administradores y Mecánicos ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= strpos(current_url(), 'repuestos') !== false ? 'active' : '' ?>" href="<?= base_url('repuestos') ?>">
+                        <i class="fas fa-cogs"></i> Repuestos
+                    </a>
+                </li>
+                <?php endif; ?>
+                <?php if (session()->get('id_rol') == 1): // Solo Administrador ?>
+                <li class="nav-item">
                     <a class="nav-link <?= strpos(current_url(), 'clientes') !== false ? 'active' : '' ?>" href="<?= base_url('clientes') ?>">
                         <i class="fas fa-users"></i> Clientes
                     </a>
@@ -23,17 +36,6 @@
                         <i class="fas fa-car"></i> Vehículos
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= strpos(current_url(), 'repuestos') !== false ? 'active' : '' ?>" href="<?= base_url('repuestos') ?>">
-                        <i class="fas fa-cogs"></i> Repuestos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= strpos(current_url(), 'ordenes') !== false ? 'active' : '' ?>" href="<?= base_url('ordenes') ?>">
-                        <i class="fas fa-clipboard-list"></i> Órdenes de Trabajo
-                    </a>
-                </li>
-                <?php if (session()->get('id_rol') == 1): // Solo Administrador ?>
                 <li class="nav-item">
                     <a class="nav-link <?= strpos(current_url(), 'usuarios') !== false ? 'active' : '' ?>" href="<?= base_url('usuarios') ?>">
                         <i class="fas fa-user-cog"></i> Usuarios
